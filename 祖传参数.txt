@@ -1,0 +1,66 @@
+    lgb_params = {
+        'boosting_type': 'gbdt',
+        'objective': 'mae',
+        'n_estimators': 10000,
+        'metric': 'mae',
+        'learning_rate': 0.05,
+        'min_child_samples': 46,
+        'min_child_weight': 0.01,
+        'num_leaves': 40,
+        'max_depth': 7,
+        'subsample': 0.4,
+        'colsample_bytree': 0.48,
+        'reg_alpha': 0.08,
+        'reg_lambda': 0.08,
+        'verbose': -1,
+        'seed': 4590
+    }
+
+    xgb_params = {
+        'booster': 'gbtree',
+        'learning_rate': 0.01,
+        'max_depth': 5,
+        'subsample': 0.7,
+        'colsample_bytree': 0.8,
+        'objective': 'reg:linear',
+        'n_estimators': 10000,
+        'min_child_weight': 3,
+        'gamma': 0,
+        'silent': True,
+        'n_jobs': 4,
+        'random_state': 4590,
+        'reg_alpha': 0.08,
+        'reg_lambda': 0.08,
+        'alpha': 1,
+        'verbose': -1
+    }
+
+    ctb_params = {
+        'n_estimators': 10000,
+        'learning_rate': 0.01,
+        'random_seed': 4590,
+        'reg_lambda': 0.08,
+        'subsample': 0.7,
+        'bootstrap_type': 'Bernoulli',
+        'boosting_type': 'Plain',
+        'one_hot_max_size': 10,
+        'rsm': 0.5,
+        'leaf_estimation_iterations': 5,
+        'use_best_model': True,
+        'max_depth': 6,
+        'verbose': -1,
+        'thread_count': 4
+    }
+
+    gbdt_params = {
+        'loss': 'lad',
+        'learning_rate': 0.1,
+        'n_estimators': 1000,
+        'random_state': 2019
+    }
+
+    rf_params = {
+        'n_estimators': 1000,
+        'n_jobs': 5,
+        'random_state': 2019
+    }
