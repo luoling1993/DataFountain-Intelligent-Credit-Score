@@ -8,15 +8,16 @@ import numpy as np
 import pandas as pd
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
+from scipy import sparse
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import KFold
 from xgboost import XGBRegressor
-from scipy import sparse
 
 from utils import get_data
+from utils import timer
 
 warnings.filterwarnings(action='ignore')
 
@@ -229,6 +230,7 @@ class TreeModels(object):
 
         return oof, prediction
 
+    @timer(func_name='TreeModels.tree.model')
     def tree_model(self, params):
         if self.mode in ['lgb', 'xgb']:
             oof, prediction = self._ensemble_tree(params)

@@ -8,6 +8,7 @@ from collections import Counter
 import pandas as pd
 
 from selector import Selector
+from utils import timer
 
 warnings.filterwarnings(action='ignore')
 
@@ -152,6 +153,7 @@ class Processing(object):
 
         return dataset
 
+    @timer(func_name='Processing.get_processing')
     def get_processing(self):
         dataset = self._get_data()
 

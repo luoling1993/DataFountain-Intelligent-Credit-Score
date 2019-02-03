@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
+from functools import wraps
 from itertools import combinations
 
 import numpy as np
@@ -73,3 +75,18 @@ def get_blending_score(score_array, weights):
     for weight, prediction in zip(weights, score_array):
         weight_prediction += weight * prediction
     return weight_prediction
+
+
+def timer(func_name):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            t0 = time.time()
+            retval = func(*args, **kwargs)
+            usage_time = time.time() - t0
+            print(f'{func_name} usage time: {usage_time}')
+            return retval
+
+        return wrapper
+
+    return decorator
