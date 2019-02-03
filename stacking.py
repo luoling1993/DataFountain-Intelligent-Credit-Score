@@ -9,7 +9,7 @@ from sklearn.model_selection import RepeatedKFold
 
 
 class Stacking(object):
-    def __init__(self, n_fold=5):
+    def __init__(self, n_fold=10):
         self.n_fold = n_fold
 
     def get_stacking(self, oof_list, prediction_list, labels):

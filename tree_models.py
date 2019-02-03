@@ -22,7 +22,7 @@ warnings.filterwarnings(action='ignore')
 
 
 class TreeModels(object):
-    def __init__(self, mode, n_fold=5, seed=4590):
+    def __init__(self, mode, n_fold=10, seed=4590):
         self.mode = mode
         self.n_fold = n_fold
         self.seed = seed
@@ -111,7 +111,7 @@ class TreeModels(object):
 
             gbm = self._get_gbm(params)
             gbm = gbm.fit(k_x_train, k_y_train, eval_set=[(k_x_train, k_y_train), (k_x_vali, k_y_vali)],
-                          early_stopping_rounds=200, verbose=True)
+                          early_stopping_rounds=200, verbose=False)
             iteration_kwargs = self._get_iteration_kwargs(gbm)
             k_pred = gbm.predict(k_x_vali, **iteration_kwargs)
             oof[vali_index] = k_pred
@@ -207,7 +207,7 @@ class TreeModels(object):
 
             gbm = self._get_gbm(params)
             gbm = gbm.fit(k_x_train, k_y_train, eval_set=[(k_x_train, k_y_train), (k_x_vali, k_y_vali)],
-                          early_stopping_rounds=200, verbose=True)
+                          early_stopping_rounds=200, verbose=False)
             iteration_kwargs = self._get_iteration_kwargs(gbm)
             k_pred = gbm.predict(k_x_vali, **iteration_kwargs)
             oof[vali_index] = k_pred
@@ -249,15 +249,16 @@ def tree_main(mode):
         'objective': 'mae',
         'n_estimators': 10000,
         'metric': 'mae',
-        'learning_rate': 0.05,
+        'learning_rate': 0.01,
         'min_child_samples': 46,
         'min_child_weight': 0.01,
+        'subsample_freq': 2,
         'num_leaves': 40,
         'max_depth': 7,
-        'subsample': 0.4,
-        'colsample_bytree': 0.48,
-        'reg_alpha': 0.08,
-        'reg_lambda': 0.08,
+        'subsample': 0.6,
+        'colsample_bytree': 0.8,
+        'reg_alpha': 0,
+        'reg_lambda': 5,
         'verbose': -1,
         'seed': 4590
     }
@@ -275,8 +276,8 @@ def tree_main(mode):
         'silent': True,
         'n_jobs': 4,
         'random_state': 4590,
-        'reg_alpha': 0.08,
-        'reg_lambda': 0.08,
+        'reg_alpha': 0,
+        'reg_lambda': 5,
         'alpha': 1,
         'verbose': 1
     }
@@ -285,7 +286,7 @@ def tree_main(mode):
         'n_estimators': 10000,
         'learning_rate': 0.01,
         'random_seed': 4590,
-        'reg_lambda': 0.08,
+        'reg_lambda': 5,
         'subsample': 0.7,
         'bootstrap_type': 'Bernoulli',
         'boosting_type': 'Plain',
@@ -330,6 +331,6 @@ def tree_main(mode):
 
 if __name__ == '__main__':
     t0 = time.time()
-    tree_main(mode='rf')
+    tree_main(mode='lgb')
     usage_time = time.time() - t0
     print(f'usage time: {usage_time}')

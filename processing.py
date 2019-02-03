@@ -3,6 +3,7 @@
 
 import os
 import warnings
+from collections import Counter
 
 import pandas as pd
 
@@ -86,6 +87,16 @@ class Processing(object):
         for column in boolean_columns:
             dataset['boolean_bin'] += dataset[column] * bin_base
             bin_base = 2 * bin_base
+
+        # 有些组合出现次数过少，合并
+        counter = Counter(dataset['boolean_bin'])
+        counter_dict = dict()
+        for item, count in counter.items():
+            if count < 5:
+                counter_dict[item] = -1
+            else:
+                counter_dict[item] = count
+        dataset['boolean_bin'] = dataset['boolean_bin'].map(counter_dict)
 
         # One-Hot
         dataset = pd.get_dummies(dataset, columns=['boolean_bin'])
