@@ -32,10 +32,10 @@ class LGBOptimize(object):
         x_data = dataset[x_columns]
         y_data = dataset['score']
 
-        """n_estimators: best:169"""
+        """n_estimators: best:239 best_score: 14.847823004441079"""
         # params = {
         #     'boosting_type': 'gbdt',
-        #     'objective': 'regression',
+        #     'objective': 'mae',
         #     'learning_rate': 0.1,
         #     'num_leaves': 50,
         #     'max_depth': 6,
@@ -48,11 +48,11 @@ class LGBOptimize(object):
         # print('best n_estimators:', len(cv_results['l1-mean']))
         # print('best cv score:', cv_results['l1-mean'][-1])
 
-        """max_depth:7 num_leaves:40 best_score:14.821626253938335"""
+        """max_depth:6 num_leaves:31 best_score:14.803535507027162"""
         # params = {
         #     'boosting_type': 'gbdt',
-        #     'objective': 'regression',
-        #     'n_estimators': 169,
+        #     'objective': 'mae',
+        #     'n_estimators': 239,
         #     'metric': 'mae',
         #     'learning_rate': 0.1,
         #     'num_leaves': 50,
@@ -61,8 +61,8 @@ class LGBOptimize(object):
         #     'colsample_bytree': 0.8,
         # }
         # grid_params = {
-        #     'max_depth': [7],
-        #     'num_leaves': range(30, 50, 1)
+        #     'max_depth': [6],
+        #     'num_leaves': [28, 29, 30, 31, 32, 33, 34, 35]
         # }
         # gbm = lgb.LGBMRegressor(**params)
         # grid_search = GridSearchCV(gbm, param_grid=grid_params, scoring='neg_mean_absolute_error', cv=5, verbose=1,
@@ -71,21 +71,21 @@ class LGBOptimize(object):
         # print(f'best params: {grid_search.best_params_}')
         # print(f'best score: {grid_search.best_score_}')
 
-        """min_child_samples:46 min_child_weight:0.01 best_score:14.81476454512563"""
+        """min_child_samples:43 min_child_weight:0 best_score:14.783911433202508"""
         # params = {
         #     'boosting_type': 'gbdt',
-        #     'objective': 'regression',
-        #     'n_estimators': 169,
+        #     'objective': 'mae',
+        #     'n_estimators': 239,
         #     'metric': 'mae',
         #     'learning_rate': 0.1,
-        #     'num_leaves': 40,
-        #     'max_depth': 7,
+        #     'num_leaves': 31,
+        #     'max_depth': 6,
         #     'subsample': 0.8,
         #     'colsample_bytree': 0.8,
         # }
         # grid_params = {
-        #     'min_child_samples': range(40, 50, 1),
-        #     'min_child_weight': [0.001]
+        #     'min_child_samples': [43],
+        #     'min_child_weight': [0, 0.001]
         # }
         # gbm = lgb.LGBMRegressor(**params)
         # grid_search = GridSearchCV(gbm, param_grid=grid_params, scoring='neg_mean_absolute_error', cv=5, verbose=1,
@@ -94,23 +94,23 @@ class LGBOptimize(object):
         # print(f'best params: {grid_search.best_params_}')
         # print(f'best score: {grid_search.best_score_}')
 
-        """subsample:0.4 colsample_bytree:0.48 best_score:14.795844417633125"""
+        """subsample:0.32 colsample_bytree:0.36 best_score:14.771928920921576"""
         # params = {
         #     'boosting_type': 'gbdt',
-        #     'objective': 'regression',
-        #     'n_estimators': 169,
+        #     'objective': 'mae',
+        #     'n_estimators': 239,
         #     'metric': 'mae',
         #     'learning_rate': 0.1,
-        #     'min_child_samples': 46,
-        #     'min_child_weight': 0.01,
-        #     'num_leaves': 40,
-        #     'max_depth': 7,
+        #     'min_child_samples': 43,
+        #     'min_child_weight': 0,
+        #     'num_leaves': 65,
+        #     'max_depth': 6,
         #     'subsample': 0.8,
         #     'colsample_bytree': 0.8,
         # }
         # grid_params = {
-        #     'subsample': [0.4],
-        #     'colsample_bytree': [0.48]
+        #     'subsample': [0.32, 0.34, 0.36, 0.38, 0.4, 0.42, 0.44, 0.46, 0.48, 0.5],
+        #     'colsample_bytree': [0.32, 0.34, 0.36, 0.38, 0.4, 0.42, 0.44, 0.46, 0.48, 0.5]
         # }
         # gbm = lgb.LGBMRegressor(**params)
         # grid_search = GridSearchCV(gbm, param_grid=grid_params, scoring='neg_mean_absolute_error', cv=5, verbose=1,
@@ -119,23 +119,23 @@ class LGBOptimize(object):
         # print(f'best params: {grid_search.best_params_}')
         # print(f'best score: {grid_search.best_score_}')
 
-        """reg_alpha:0.08 reg_lambda:0.08 best_score:14.778696016248404"""
+        """reg_alpha:2 reg_lambda:0.1 best_score:14.75515862949816"""
         # params = {
         #     'boosting_type': 'gbdt',
-        #     'objective': 'regression',
-        #     'n_estimators': 169,
+        #     'objective': 'mae',
+        #     'n_estimators': 239,
         #     'metric': 'mae',
         #     'learning_rate': 0.1,
-        #     'min_child_samples': 46,
-        #     'min_child_weight': 0.01,
-        #     'num_leaves': 40,
-        #     'max_depth': 7,
-        #     'subsample': 0.4,
-        #     'colsample_bytree': 0.48
+        #     'min_child_samples': 43,
+        #     'min_child_weight': 0,
+        #     'num_leaves': 65,
+        #     'max_depth': 6,
+        #     'subsample': 0.32,
+        #     'colsample_bytree': 0.36,
         # }
         # grid_params = {
-        #     'reg_alpha': [0.06, 0.07, 0.08, 0.09, 0.1],
-        #     'reg_lambda': [0.06, 0.07, 0.08, 0.09, 0.1]
+        #     'reg_alpha': [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 3],
+        #     'reg_lambda': [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 3],
         # }
         # gbm = lgb.LGBMRegressor(**params)
         # grid_search = GridSearchCV(gbm, param_grid=grid_params, scoring='neg_mean_absolute_error', cv=5, verbose=1,
@@ -147,18 +147,18 @@ class LGBOptimize(object):
         """learning_rate:0.1 best_score:14.778696016248404"""
         params = {
             'boosting_type': 'gbdt',
-            'objective': 'regression',
-            'n_estimators': 169,
+            'objective': 'mae',
+            'n_estimators': 239,
             'metric': 'mae',
             'learning_rate': 0.1,
-            'min_child_samples': 46,
-            'min_child_weight': 0.01,
-            'num_leaves': 40,
-            'max_depth': 7,
-            'subsample': 0.4,
-            'colsample_bytree': 0.48,
-            'reg_alpha': 0.08,
-            'reg_lambda': 0.08
+            'min_child_samples': 43,
+            'min_child_weight': 0,
+            'num_leaves': 65,
+            'max_depth': 6,
+            'subsample': 0.32,
+            'colsample_bytree': 0.36,
+            'reg_alpha': 2,
+            'reg_lambda': 0.1,
         }
         grid_params = {
             'learning_rate': [0.001, 0.005, 0.01, 0.05, 0.1],
@@ -276,5 +276,5 @@ class XGBOptimize(object):
 
 
 if __name__ == '__main__':
-    optimizer = XGBOptimize()
+    optimizer = LGBOptimize()
     optimizer.optimize()

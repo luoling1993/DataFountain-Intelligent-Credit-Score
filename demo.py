@@ -3,6 +3,5 @@ import pandas as pd
 from scipy import sparse
 
 
-df = pd.DataFrame({'a': np.random.randint(0, 2, 5), 'b': np.random.randint(0, 2, 5), 'c': np.random.randint(0, 2, 5)})
-csr = sparse.csr_matrix(df.values)
-print(csr)
+a = np.random.dirichlet(alpha=np.ones(5), size=1).flatten()
+print(a)

@@ -35,7 +35,7 @@ def auto_ml():
     test_sample_ids = test_data['id'].as_data_frame().values.flatten()
     y_labels = train_data['score'].as_data_frame().values.flatten()
 
-    aml = H2OAutoML(max_models=20, seed=2019, max_runtime_secs=7200)
+    aml = H2OAutoML(max_models=50, seed=2019, max_runtime_secs=7200)
     aml.train(x=features_columns, y='score', training_frame=train_data)
 
     lb = aml.leaderboard

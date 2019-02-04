@@ -246,21 +246,40 @@ class TreeModels(object):
 
 def tree_main(mode):
     assert mode in ['lgb', 'xgb', 'rf', 'ctb', 'ada', 'gbdt']
+    # lgb_params = {
+    #     'boosting_type': 'gbdt',
+    #     'objective': 'mae',
+    #     'n_estimators': 10000,
+    #     'metric': 'mae',
+    #     'learning_rate': 0.01,
+    #     'min_child_samples': 46,
+    #     'min_child_weight': 0.01,
+    #     'subsample_freq': 1,
+    #     'num_leaves': 40,
+    #     'max_depth': 7,
+    #     'subsample': 0.6,
+    #     'colsample_bytree': 0.8,
+    #     'reg_alpha': 0,
+    #     'reg_lambda': 5,
+    #     'verbose': -1,
+    #     'seed': 4590
+    # }
+
     lgb_params = {
         'boosting_type': 'gbdt',
         'objective': 'mae',
         'n_estimators': 10000,
         'metric': 'mae',
         'learning_rate': 0.01,
-        'min_child_samples': 46,
-        'min_child_weight': 0.01,
-        'subsample_freq': 2,
-        'num_leaves': 40,
-        'max_depth': 7,
+        'min_child_samples': 43,
+        'min_child_weight': 0,
+        'subsample_freq': 1,
+        'num_leaves': 65,
+        'max_depth': 6,
         'subsample': 0.6,
         'colsample_bytree': 0.8,
-        'reg_alpha': 0,
-        'reg_lambda': 5,
+        'reg_alpha': 2,
+        'reg_lambda': 0.1,
         'verbose': -1,
         'seed': 4590
     }
@@ -278,8 +297,8 @@ def tree_main(mode):
         'silent': True,
         'n_jobs': 4,
         'random_state': 4590,
-        'reg_alpha': 0,
-        'reg_lambda': 5,
+        'reg_alpha': 2,
+        'reg_lambda': 0.1,
         'alpha': 1,
         'verbose': 1
     }

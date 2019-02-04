@@ -44,7 +44,7 @@ class Blending(object):
         best_weight = None
         best_error = 9999.9
         for _ in range(self.num_round):
-            weight = np.random.uniform(size=score_num)
+            weight = np.random.dirichlet(alpha=np.ones(score_num), size=1).flatten()
             bounds = [(0, 1)] * score_num
 
             res = minimize(self._mae_func, weight, method='L-BFGS-B', bounds=bounds,
