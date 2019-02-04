@@ -2,7 +2,7 @@
 
 - 简介
   - [赛题介绍](https://www.datafountain.cn/competitions/337/details/rule)
-  - 线上分数
+  - 线上分数：0.06391+，调参任务还没有完全做完
 
 - 特征工程
 
