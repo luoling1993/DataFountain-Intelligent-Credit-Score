@@ -1,7 +1,7 @@
-import numpy as np
 import pandas as pd
-from scipy import sparse
+import numpy as np
 
+import lightgbm as lgb
 
-a = np.random.dirichlet(alpha=np.ones(5), size=1).flatten()
-print(a)
+lgb.train()
+

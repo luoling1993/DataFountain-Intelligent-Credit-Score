@@ -22,11 +22,12 @@ from utils import timer
 warnings.filterwarnings(action='ignore')
 
 
-class TreeModels(object):
-    def __init__(self, mode, n_fold=10, seed=4590):
+class TreeRegression(object):
+    def __init__(self, mode, n_fold=10, seed=4590, save=False):
         self.mode = mode
         self.n_fold = n_fold
         self.seed = seed
+        self.save = save
         self._check_mode(self.mode)
 
     @staticmethod
@@ -132,6 +133,12 @@ class TreeModels(object):
         preds_list = list(preds_df.mean(axis=1))
         prediction = preds_list
 
+        if self.save:
+            sub_df = pd.DataFrame({'id': test_data['id'],
+                                   'score': prediction})
+            sub_df['score'] = sub_df['score'].apply(lambda item: int(round(item)))
+            sub_df.to_csv('submittion.csv', index=False)
+
         return oof, prediction
 
     def _sklearn_tree(self, params):
@@ -179,6 +186,12 @@ class TreeModels(object):
         preds_df.columns = preds_columns
         preds_list = list(preds_df.mean(axis=1))
         prediction = preds_list
+
+        if self.save:
+            sub_df = pd.DataFrame({'id': test_data['id'],
+                                   'score': prediction})
+            sub_df['score'] = sub_df['score'].apply(lambda item: int(round(item)))
+            sub_df.to_csv('submittion.csv', index=False)
 
         return oof, prediction
 
@@ -228,6 +241,12 @@ class TreeModels(object):
         preds_list = list(preds_df.mean(axis=1))
         prediction = preds_list
 
+        if self.save:
+            sub_df = pd.DataFrame({'id': test_data['id'],
+                                   'score': prediction})
+            sub_df['score'] = sub_df['score'].apply(lambda item: int(round(item)))
+            sub_df.to_csv('submittion.csv', index=False)
+
         return oof, prediction
 
     @timer(func_name='TreeModels.tree.model')
@@ -244,45 +263,45 @@ class TreeModels(object):
         return oof, prediction
 
 
-def tree_main(mode):
+def regression_main(mode, **kwargs):
     assert mode in ['lgb', 'xgb', 'rf', 'ctb', 'ada', 'gbdt']
-    # lgb_params = {
-    #     'boosting_type': 'gbdt',
-    #     'objective': 'mae',
-    #     'n_estimators': 10000,
-    #     'metric': 'mae',
-    #     'learning_rate': 0.01,
-    #     'min_child_samples': 46,
-    #     'min_child_weight': 0.01,
-    #     'subsample_freq': 1,
-    #     'num_leaves': 40,
-    #     'max_depth': 7,
-    #     'subsample': 0.6,
-    #     'colsample_bytree': 0.8,
-    #     'reg_alpha': 0,
-    #     'reg_lambda': 5,
-    #     'verbose': -1,
-    #     'seed': 4590
-    # }
-
     lgb_params = {
         'boosting_type': 'gbdt',
         'objective': 'mae',
         'n_estimators': 10000,
         'metric': 'mae',
         'learning_rate': 0.01,
-        'min_child_samples': 43,
-        'min_child_weight': 0,
+        'min_child_samples': 46,
+        'min_child_weight': 0.01,
         'subsample_freq': 1,
-        'num_leaves': 65,
-        'max_depth': 6,
-        'subsample': 0.6,
-        'colsample_bytree': 0.8,
-        'reg_alpha': 2,
-        'reg_lambda': 0.1,
+        'num_leaves': 40,
+        'max_depth': 7,
+        'subsample': 0.42,
+        'colsample_bytree': 0.48,
+        'reg_alpha': 0.15,
+        'reg_lambda': 5,
         'verbose': -1,
         'seed': 4590
     }
+
+    # lgb_params = {
+    #     'boosting_type': 'gbdt',
+    #     'objective': 'mae',
+    #     'n_estimators': 10000,
+    #     'metric': 'mae',
+    #     'learning_rate': 0.01,
+    #     'min_child_samples': 43,
+    #     'min_child_weight': 0,
+    #     'subsample_freq': 1,
+    #     'num_leaves': 65,
+    #     'max_depth': 6,
+    #     'subsample': 0.6,
+    #     'colsample_bytree': 0.8,
+    #     'reg_alpha': 2,
+    #     'reg_lambda': 0.1,
+    #     'verbose': -1,
+    #     'seed': 4590
+    # }
 
     xgb_params = {
         'booster': 'gbtree',
@@ -334,24 +353,24 @@ def tree_main(mode):
     }
 
     if mode == 'lgb':
-        lgb_oof, lgb_prediction = TreeModels(mode='lgb').tree_model(lgb_params)
+        lgb_oof, lgb_prediction = TreeRegression(mode='lgb', **kwargs).tree_model(lgb_params)
         return lgb_oof, lgb_prediction
     elif mode == 'xgb':
-        xgb_oof, xgb_prediction = TreeModels(mode='xgb').tree_model(xgb_params)
+        xgb_oof, xgb_prediction = TreeRegression(mode='xgb', **kwargs).tree_model(xgb_params)
         return xgb_oof, xgb_prediction
     elif mode == 'ctb':
-        ctb_oof, ctb_prediction = TreeModels(mode='ctb').tree_model(ctb_params)
+        ctb_oof, ctb_prediction = TreeRegression(mode='ctb', **kwargs).tree_model(ctb_params)
         return ctb_oof, ctb_prediction
     elif mode == 'gbdt':
-        gbdt_oof, gbdt_prediction = TreeModels(mode='gbdt').tree_model(gbdt_params)
+        gbdt_oof, gbdt_prediction = TreeRegression(mode='gbdt', **kwargs).tree_model(gbdt_params)
         return gbdt_oof, gbdt_prediction
     elif mode == 'rf':
-        rf_oof, rf_prediction = TreeModels(mode='rf').tree_model(rf_params)
+        rf_oof, rf_prediction = TreeRegression(mode='rf', **kwargs).tree_model(rf_params)
         return rf_oof, rf_prediction
 
 
 if __name__ == '__main__':
     t0 = time.time()
-    tree_main(mode='lgb')
+    regression_main(mode='lgb', save=True)
     usage_time = time.time() - t0
     print(f'usage time: {usage_time}')

@@ -145,23 +145,52 @@ class LGBOptimize(object):
         # print(f'best score: {grid_search.best_score_}')
 
         """learning_rate:0.1 best_score:14.778696016248404"""
+        # params = {
+        #     'boosting_type': 'gbdt',
+        #     'objective': 'mae',
+        #     'n_estimators': 239,
+        #     'metric': 'mae',
+        #     'learning_rate': 0.1,
+        #     'min_child_samples': 43,
+        #     'min_child_weight': 0,
+        #     'num_leaves': 65,
+        #     'max_depth': 6,
+        #     'subsample': 0.32,
+        #     'colsample_bytree': 0.36,
+        #     'reg_alpha': 2,
+        #     'reg_lambda': 0.1,
+        # }
+        # grid_params = {
+        #     'learning_rate': [0.001, 0.005, 0.01, 0.05, 0.1],
+        # }
+        # gbm = lgb.LGBMRegressor(**params)
+        # grid_search = GridSearchCV(gbm, param_grid=grid_params, scoring='neg_mean_absolute_error', cv=5, verbose=1,
+        #                            n_jobs=5)
+        # grid_search.fit(x_data, y_data)
+        # print(f'best params: {grid_search.best_params_}')
+        # print(f'best score: {grid_search.best_score_}')
+
         params = {
             'boosting_type': 'gbdt',
             'objective': 'mae',
-            'n_estimators': 239,
+            'n_estimators': 10000,
             'metric': 'mae',
-            'learning_rate': 0.1,
-            'min_child_samples': 43,
-            'min_child_weight': 0,
-            'num_leaves': 65,
-            'max_depth': 6,
-            'subsample': 0.32,
-            'colsample_bytree': 0.36,
+            'learning_rate': 0.01,
+            'min_child_samples': 46,
+            'min_child_weight': 0.01,
+            'subsample_freq': 1,
+            'num_leaves': 40,
+            'max_depth': 7,
+            'subsample': 0.42,
+            'colsample_bytree': 0.48,
             'reg_alpha': 2,
             'reg_lambda': 0.1,
+            'verbose': -1,
+            'seed': 4590
         }
         grid_params = {
-            'learning_rate': [0.001, 0.005, 0.01, 0.05, 0.1],
+            'subsample': [0.45, 0.5, 0.55],
+            'colsample_bytree': [0.85, 0.9, 0.95]
         }
         gbm = lgb.LGBMRegressor(**params)
         grid_search = GridSearchCV(gbm, param_grid=grid_params, scoring='neg_mean_absolute_error', cv=5, verbose=1,

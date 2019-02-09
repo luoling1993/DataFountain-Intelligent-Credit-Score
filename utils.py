@@ -6,6 +6,7 @@ import time
 from functools import wraps
 from itertools import combinations
 
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
@@ -90,3 +91,45 @@ def timer(func_name):
         return wrapper
 
     return decorator
+
+
+def get_features_importance():
+    dataset = get_data()
+
+    train_data = dataset[dataset['score'] > 0]
+    y_data = train_data['score']
+    x_data = train_data.drop(columns=['id', 'score'])
+
+    params = {
+        'boosting_type': 'gbdt',
+        'objective': 'mae',
+        'n_estimators': 10000,
+        'metric': 'mae',
+        'learning_rate': 0.01,
+        'min_child_samples': 46,
+        'min_child_weight': 0.01,
+        'subsample_freq': 1,
+        'num_leaves': 40,
+        'max_depth': 7,
+        # 'subsample': 0.6,
+        # 'colsample_bytree': 0.8,
+        'reg_alpha': 0,
+        'reg_lambda': 5,
+        'verbose': -1,
+        'seed': 4590
+    }
+    columns = x_data.columns
+    gbm = lgb.LGBMRegressor(**params)
+    gbm = gbm.fit(x_data, y_data)
+    feature_importance = gbm.feature_importances_
+    importance_df = pd.DataFrame({'column': columns, 'score': feature_importance})
+    importance_df = importance_df.sort_values(by=['score'], ascending=False).reset_index()
+
+    for _, rows in importance_df.iterrows():
+        column = rows['column']
+        importance = rows['score']
+        print(f'column: {column}, importance: {importance}')
+
+
+if __name__ == '__main__':
+    get_features_importance()

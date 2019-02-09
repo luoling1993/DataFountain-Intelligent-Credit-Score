@@ -6,7 +6,7 @@ import time
 from blending import Blending
 # from processing import processing_main
 from stacking import Stacking
-from tree_models import tree_main
+from tree_regression import regression_main
 from utils import get_blending_score
 from utils import get_combinations
 from utils import get_data
@@ -39,9 +39,10 @@ if __name__ == '__main__':
     # rf也会降分，而且非常慢
     # mode_list = ['lgb', 'xgb', 'ctb', 'gbdt']
     mode_list = ['lgb', 'xgb', 'ctb']
+    # mode_list = ['lgb']
     for mode in mode_list:
         mode_score_name = f'{mode}_score'
-        oof, prediction = tree_main(mode=mode)
+        oof, prediction = regression_main(mode=mode)
         oof_list.append(oof)
         prediction_list.append(prediction)
 
@@ -50,7 +51,7 @@ if __name__ == '__main__':
         test_score_df[mode_score_name] = prediction
 
     # stacking
-    combinations_list = get_combinations(range(len(oof_list)))
+    combinations_list = get_combinations(range(len(oof_list) + 1))
     for bin_item in combinations_list:
         oof = get_values_by_index(oof_list, bin_item)
         prediction = get_values_by_index(prediction_list, bin_item)

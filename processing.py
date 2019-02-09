@@ -5,6 +5,7 @@ import os
 import warnings
 from collections import Counter
 
+import numpy as np
 import pandas as pd
 
 from selector import Selector
@@ -18,8 +19,9 @@ ETLDATA_PATH = os.path.join(BASE_PATH, 'EtlData')
 
 
 class Processing(object):
-    def __init__(self, selector=False):
+    def __init__(self, selector=False, ascending=False):
         self.selector = selector
+        self.ascending = ascending
 
     @staticmethod
     def _get_columns_name():
@@ -113,6 +115,38 @@ class Processing(object):
         else:
             return 0
 
+    @staticmethod
+    def _shopping_encoder(item):
+        is_shopping = item['is_shopping']
+        avg_shopping_num = item['avg_shopping_num']
+
+        if is_shopping == 0:
+            if avg_shopping_num < 10:
+                return 0
+            elif avg_shopping_num < 20:
+                return 1
+            else:
+                return 2
+        else:
+            if avg_shopping_num < 20:
+                return 3
+            return 4
+
+    @staticmethod
+    def _get_app_rate(dataset):
+        dataset = dataset.copy()
+
+        app_num_columns = ['online_shopping_num', 'logistics_num', 'financing_num', 'video_num', 'airplant_num',
+                           'train_num', 'travel_num']
+        dataset['helper_sum'] = dataset[app_num_columns].apply(lambda item: np.log1p(np.sum(item)), axis=1)
+
+        for column in app_num_columns:
+            column_name = f'{column}_rate'
+            dataset[column_name] = np.log1p(dataset[column]) / dataset['helper_sum']
+
+        # dataset = dataset.drop(columns=['helper_sum'])
+        return dataset
+
     def _get_operation_features(self, dataset):
         dataset = dataset.copy()
 
@@ -122,8 +156,23 @@ class Processing(object):
         # 稳定性
         # 当月话费 / (近6个月平均话费 + 5)
         dataset['month_half_year_stable'] = dataset['this_month_acount'] / (dataset['avg_pay_acount'] + 5)
+        dataset['month_half_year_diff'] = dataset['this_month_acount'] - dataset['avg_pay_acount']
         # 当月话费 / (当月账户余额 + 5)
         dataset['use_left_stable'] = dataset['this_month_acount'] / (dataset['this_month_balance'] + 5)
+        dataset['use_left_diff'] = dataset['this_month_acount'] - dataset['this_month_balance']
+
+        # 商场行为编码
+        dataset['shopping_encoder'] = dataset[['is_shopping', 'avg_shopping_num']].apply(self._shopping_encoder, axis=1)
+        dataset = pd.get_dummies(dataset, columns=['shopping_encoder'])
+
+        # 上网时长
+        dataset['surfing_time_copy'] = dataset['surfing_time']
+        dataset['surfing_time_copy'] = pd.qcut(dataset['surfing_time_copy'], 5, labels=False)
+        dataset = pd.get_dummies(dataset, columns=['surfing_time_copy'])
+
+        # APP打开占比
+        dataset = self._get_app_rate(dataset)
+
         return dataset
 
     @staticmethod
@@ -136,7 +185,7 @@ class Processing(object):
         #     dataset[column] = dataset[column].map(mapping_dict)
         # qcut
         for column in num_columns:
-            dataset[column] = pd.qcut(dataset[column], 500, labels=False, duplicates='drop')
+            dataset[column] = pd.qcut(dataset[column], 20, labels=False, duplicates='drop')
 
         train_data = dataset[dataset['score'] > 0]
         train_data['helper'] = pd.cut(train_data['score'], 5, labels=False)
@@ -177,7 +226,7 @@ class Processing(object):
             abnormal_encoder_columns.append(encoder_column)
         dataset = pd.get_dummies(dataset, columns=abnormal_encoder_columns)  # One-Hot
 
-        # 缺失值单独抽离特征
+        # 缺失值单独抽离特征：无效
         for column in num_columns:
             # abnormal已处理过，continue
             if column in abnormal_columns:
@@ -186,40 +235,27 @@ class Processing(object):
             dataset[column_name] = dataset[column].apply(self._get_missing_value)
 
         # 将bool类型重新组合
-        # 由于重组One-Hot后维度太高，采取PCA降维
-        dataset = self._recombine_boolean_columns(dataset, boolean_columns)
-        # boolean_bin_columns = list()
-        # for column in dataset.columns:
-        #     if 'boolean_bin' in column:
-        #         boolean_bin_columns.append(column)
-        # boolean_bin_df = dataset[boolean_bin_columns]
-        # dataset = dataset.drop(columns=boolean_bin_columns)
-        # n_components = 100
-        #
-        # pca_columns = [f'encoder_pca_{i}' for i in range(n_components)]
-        # pca = PCA(n_components=n_components)
-        # pca_data = pca.fit_transform(boolean_bin_df)
-        # pca_df = pd.DataFrame(data=pca_data, columns=pca_columns)
-        # dataset = pd.concat([dataset, pca_df], axis=1)
+        # dataset = self._recombine_boolean_columns(dataset, boolean_columns)
 
-        # # embedding
-        # dataset = self._data_encoder(dataset, num_columns)
+        # embedding
+        # dataset = self._data_encoder(dataset, ['surfing_time', 'age'])
 
         # 业务逻辑特征
         dataset = self._get_operation_features(dataset)
 
         if self.selector:
-            y_data = dataset['score']
-            x_data = dataset.drop(columns=['id', 'score'])
-            select_fectures = Selector().get_select_features(x_data, y_data)
+            train_data = dataset[dataset['score'] > 0]
+            y_data = train_data['score']
+            x_data = train_data.drop(columns=['id', 'score'])
+            select_fectures = Selector(ascending=self.ascending).get_select_features(x_data, y_data)
             select_fectures.extend(['id', 'score'])
             dataset = dataset[select_fectures]
 
         return dataset
 
 
-def processing_main(selector=False):
-    processing = Processing(selector=selector)
+def processing_main(selector=False, ascending=False):
+    processing = Processing(selector=selector, ascending=ascending)
     dt = processing.get_processing()
 
     features_name = os.path.join(ETLDATA_PATH, 'features.csv')
@@ -227,4 +263,4 @@ def processing_main(selector=False):
 
 
 if __name__ == '__main__':
-    processing_main(selector=False)
+    processing_main(selector=False, ascending=False)
